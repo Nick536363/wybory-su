@@ -1,0 +1,27 @@
+{
+  "name": "wybory-su",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Nick536363/wybory-su#readme",
+  "bugs": {
+    "url": "https://github.com/Nick536363/wybory-su/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nick536363/wybory-su.git"
+  },
+  "license": "MIT",
+  "author": "Nick536363",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "node.date-time": "^1.2.2",
+    "sqlite": "^5.1.1"
+  }
+}
