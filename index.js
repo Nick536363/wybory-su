@@ -1,5 +1,6 @@
 const express = require("express")
 const format = require("node.date-time")
+const fs = require("fs")
 const { DatabaseSync } = require("node:sqlite")
 require("dotenv").config()
 const db = new DatabaseSync(__dirname+"/"+process.env.DB_NAME)
@@ -32,6 +33,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs');
 
+app.use((req, res, next)=>{
+    log("log.log", `${req.ip} wszedł na ${req.url} (${req.method})`)
+    next()
+})
 
 
 app.get("/", (req, res) => {
@@ -46,7 +51,8 @@ app.post("/confirm", (req, res) => {
         return res.redirect("/")
     }
     else{
-        res.sendFile(`${__dirname}/templates/exists.html`)
+        log("log.log", `${req.ip}: Identyfikator ${ID.ID} został przyłożony poraz kolejny`)
+        return res.sendFile(`${__dirname}/templates/exists.html`)
     }
 
 })
