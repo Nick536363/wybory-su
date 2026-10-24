@@ -13,7 +13,7 @@ const PORT = process.env.PORT
 // CREATE
 
 const newID = db.prepare("INSERT INTO IDs (ID) VALUES (?);")
-const newUser = db.prepare("INSERT INTO users (username, pass, salt) VALUES (?, ?, ?);")
+const newUser = db.prepare("INSERT INTO users (username, pass, salt, status) VALUES (?, ?, ?, ?);")
 
 // READ
 
@@ -140,8 +140,14 @@ app.post("/add_user", (req, res) => {
     }
 
     let salt = crypto.randomBytes(64).toString("hex")
+    if(!req.body.admin){
+        newUser.run(req.body.username, crypto.scryptSync(req.body.pass, salt, 64).toString("hex"), salt, "user")
+    }
 
-    newUser.run(req.body.username, crypto.scryptSync(req.body.pass, salt, 64).toString("hex"), salt)
+    else if(req.body.admin == "on"){
+        newUser.run(req.body.username, crypto.scryptSync(req.body.pass, salt, 64).toString("hex"), salt, "admin")
+    }
+    
     return res.redirect("/panel")
 
 })
