@@ -1,5 +1,7 @@
 const express = require("express")
 const format = require("node.date-time")
+const session = require("express-session")
+const crypto = require("node:crypto")
 const fs = require("fs")
 const { DatabaseSync } = require("node:sqlite")
 require("dotenv").config()
@@ -15,8 +17,7 @@ const newID = db.prepare("INSERT INTO IDs (ID) VALUES (?);")
 // READ
 
 const getID = db.prepare("SELECT ID FROM IDs WHERE ID = ?;")
-const allID = db.prepare("SELECT ID FROM IDs")
-
+const getPass = db.prepare("SELECT ID, pass, salt FROM users WHERE username = ?;")
 
 
 function log(file, message){
@@ -28,6 +29,15 @@ function log(file, message){
     })
     
 }
+app.use(session({
+    secret: process.env.SECRET,
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+        httpOnly: true,
+        sameSite: "lax"
+    }
+}))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -39,12 +49,37 @@ app.use((req, res, next)=>{
 })
 
 
+app.get("/login", (req, res) => {
+    return res.sendFile(`${__dirname}/templates/login.html`)
+})
+
+app.post("/login", (req, res) => {
+    const user = req.body.login
+    const passNsalt = getPass.get(user)
+    if(!passNsalt){
+        return res.redirect("/login")
+    }
+    const salt = passNsalt.salt
+    const hashed_passwd = crypto.scryptSync(req.body.pass, salt, 64)
+    if(crypto.timingSafeEqual(Buffer.from(passNsalt.pass, "hex"), hashed_passwd)){
+        req.session.user = passNsalt.ID
+        return res.redirect("/")
+    }
+    return res.redirect("/login")
+})
+
 app.get("/", (req, res) => {
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
     return res.sendFile(`${__dirname}/templates/index.html`)
     
 })
 
 app.post("/confirm", (req, res) => {
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
     ID = getID.get(parseInt(req.body.ID))
     if(ID == undefined){
         newID.run(req.body.ID)
