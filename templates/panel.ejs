@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+    <form method="POST" action="/add_user">
+        <button type="submit">Dodaj użytkownika</button>
+    </form>
+    <table>
+        <tr>
+            <th>Użytkownik</th>
+            <th>Uprawnienia</th>
+        </tr>
+        <% users.forEach((user)=>{%>
+            <tr>
+                <td><%= user.username %></td>
+                <td><%= user.status %></td>
+                <td>
+                    <form method="POST" action="/change_user_confrim">
+                        <button name="ID" id="ID" value="<%= user.ID %>">Zmień</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" action="/delete_user_confirm">
+                        <button name="ID" id="ID" value="<%= user.ID %>">Usuń</button>
+                    </form>
+                </td>
+            </tr>
+        <%});%>
+    </table>
+</body>
+</html>

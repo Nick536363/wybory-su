@@ -103,7 +103,7 @@ button:active {
 </head>
 <body>
     <h1>Log in</h1>
-    <form method="POST" action="/login">
+    <form method="POST" action=<%= action %> >
         <input type="text" id="login" name="login" autofocus>
         <input type="password" id="pass" name="pass">
         <button type="submit">Log in</button>

@@ -99,9 +99,23 @@ button:active {
     }
 }
 
+#panel_link {
+    position: sticky;
+    border: 1px solid #2863c7;
+    background-color: #3978e5;
+    color: #cbd5e1;
+    width: 3em;
+    height: 3em;
+    display: flex;
+    justify-content: center;
+    
+
+}
+
     </style>
 </head>
 <body>
+    <a href="panel_login"><div id="panel_link">A.P.</div></a>
     <form method="POST" action="/confirm">
         <input type="number" name="ID" id="ID" autofocus>
         <button type="submit">Sprawdź/Dodaj</button>

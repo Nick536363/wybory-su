@@ -17,7 +17,8 @@ const newID = db.prepare("INSERT INTO IDs (ID) VALUES (?);")
 // READ
 
 const getID = db.prepare("SELECT ID FROM IDs WHERE ID = ?;")
-const getPass = db.prepare("SELECT ID, pass, salt FROM users WHERE username = ?;")
+const getUser = db.prepare("SELECT ID, pass, salt, status FROM users WHERE username = ?;")
+const allUsers = db.prepare("SELECT * FROM users;")
 
 
 function log(file, message){
@@ -48,25 +49,69 @@ app.use((req, res, next)=>{
     next()
 })
 
+// LOGIN
 
 app.get("/login", (req, res) => {
-    return res.sendFile(`${__dirname}/templates/login.html`)
+    return res.render(`${__dirname}/templates/login.ejs`, {action: "/login"})
 })
 
 app.post("/login", (req, res) => {
     const user = req.body.login
-    const passNsalt = getPass.get(user)
-    if(!passNsalt){
+    const userdata = getUser.get(user)
+    if(!userdata){
         return res.redirect("/login")
     }
-    const salt = passNsalt.salt
+    const salt = userdata.salt
     const hashed_passwd = crypto.scryptSync(req.body.pass, salt, 64)
-    if(crypto.timingSafeEqual(Buffer.from(passNsalt.pass, "hex"), hashed_passwd)){
-        req.session.user = passNsalt.ID
+    if(crypto.timingSafeEqual(Buffer.from(userdata.pass, "hex"), hashed_passwd)){
+        req.session.user = userdata.ID
         return res.redirect("/")
     }
     return res.redirect("/login")
 })
+
+// PANEL LOGIN
+
+app.get("/panel_login", (req, res) => {
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    return res.render(`${__dirname}/templates/login.ejs`, {action: "/panel_login"})
+})
+
+app.post("/panel_login", (req, res) => {
+    const user = req.body.login
+    const userdata = getUser.get(user)
+    if(!userdata){
+        return res.redirect("/panel_login")
+    }
+    const salt = userdata.salt
+    const hashed_passwd = crypto.scryptSync(req.body.pass, salt, 64)
+    if(crypto.timingSafeEqual(Buffer.from(userdata.pass, "hex"), hashed_passwd) && userdata.status == "admin"){
+        req.session.admin = userdata.ID
+        return res.redirect("/panel")
+    }
+    return res.redirect("/panel_login")
+})
+
+
+// PANEL
+
+app.get("/panel", (req, res) => {
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    else if(!req.session.admin){
+        return res.redirect("/")
+    }
+
+    let users = allUsers.all()
+
+    return res.render(`${__dirname}/templates/panel.ejs`, {users: users})
+})
+
+
+// MAIN
 
 app.get("/", (req, res) => {
     if(!req.session.user){
