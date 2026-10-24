@@ -18,8 +18,14 @@ const newUser = db.prepare("INSERT INTO users (username, pass, salt) VALUES (?, 
 // READ
 
 const getID = db.prepare("SELECT ID FROM IDs WHERE ID = ?;")
-const getUser = db.prepare("SELECT ID, pass, salt, status FROM users WHERE username = ?;")
+const getUser = db.prepare("SELECT * FROM users WHERE username = ?;")
+const getUserByID = db.prepare("SELECT * FROM users WHERE ID = ?;")
 const allUsers = db.prepare("SELECT * FROM users;")
+
+// DELETE
+
+const deleteUser = db.prepare("DELETE FROM users WHERE ID = ?;")
+
 
 
 function log(file, message){
@@ -136,6 +142,36 @@ app.post("/add_user", (req, res) => {
     let salt = crypto.randomBytes(64).toString("hex")
 
     newUser.run(req.body.username, crypto.scryptSync(req.body.pass, salt, 64).toString("hex"), salt)
+    return res.redirect("/panel")
+
+})
+
+
+// USUWANIE USER'A
+
+app.get("/delete_user_confirm", (req, res) => {
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    else if(!req.session.admin){
+        return res.redirect("/")
+    }
+
+
+    let user = getUserByID.get(parseInt(req.query.ID))
+
+    return res.render(`${__dirname}/templates/deleteUser.ejs`, {user:user, query: req.query})
+})
+
+app.post("/delete_user", (req, res) => {
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    else if(!req.session.admin){
+        return res.redirect("/")
+    }
+
+    deleteUser.run(parseInt(req.body.ID))
     return res.redirect("/panel")
 
 })

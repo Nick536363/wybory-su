@@ -20,8 +20,8 @@
                 <td><%= user.username %></td>
                 <td><%= user.status %></td>
                 <td>
-                    <form method="POST" action="/delete_user_confirm">
-                        <button name="ID" id="ID" value="<%= user.ID %>">Usuń</button>
+                    <form method="GET" action="/delete_user_confirm">
+                        <button name="ID" id="ID" value=<%= user.ID %>>Usuń</button>
                     </form>
                 </td>
             </tr>

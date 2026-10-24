@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zmień</title>
+    <title>Usunąc <%= user.username %>?</title>
 </head>
 <body>
-    
+    <h1>Usunąć użytkownika <%= user.username %>?</h1>
+    <form method="GET" action="/panel">
+        <button type="submit" autofocus>Nie, wróc</button>
+    </form>
+    <form method="POST" action="/delete_user">
+        <button type="submit" name="ID" id="ID" value=<%= query.ID %>>Tak, usuń</button>
+    </form>
 </body>
 </html>
