@@ -13,6 +13,7 @@ const PORT = process.env.PORT
 // CREATE
 
 const newID = db.prepare("INSERT INTO IDs (ID) VALUES (?);")
+const newUser = db.prepare("INSERT INTO users (username, pass, salt) VALUES (?, ?, ?);")
 
 // READ
 
@@ -110,6 +111,34 @@ app.get("/panel", (req, res) => {
     return res.render(`${__dirname}/templates/panel.ejs`, {users: users})
 })
 
+
+// DODANIE USER'A
+
+app.get("/add_user", (req ,res) => {
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    else if(!req.session.admin){
+        return res.redirect("/")
+    }
+
+    return res.sendFile(`${__dirname}/templates/addUser.html`)
+})
+
+app.post("/add_user", (req, res) => {
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    else if(!req.session.admin){
+        return res.redirect("/")
+    }
+
+    let salt = crypto.randomBytes(64).toString("hex")
+
+    newUser.run(req.body.username, crypto.scryptSync(req.body.pass, salt, 64).toString("hex"), salt)
+    return res.redirect("/panel")
+
+})
 
 // MAIN
 
