@@ -4,13 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+        <style>
+
+/* Общие настройки */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+
+    font-family: Arial, sans-serif;
+    background-color: #f3f5f8;
+    color: #263238;
+}
+
+/* Формы и сообщения */
+form,
+body > h1 {
+    width: 100%;
+    max-width: 380px;
+    padding: 32px;
+    background-color: #ffffff;
+    border: 1px solid #e3e8ef;
+    border-radius: 14px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+}
+
+body > h1 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+/* Поле ввода */
+input {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+
+    font-size: 16px;
+    color: #263238;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+    border-color: #3978e5;
+    box-shadow: 0 0 0 3px rgba(57, 120, 229, 0.15);
+}
+
+/* Кнопки */
+button {
+    width: 100%;
+    padding: 12px 16px;
+
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #3978e5;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #2863c7;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Адаптация для телефонов */
+@media (max-width: 480px) {
+    form,
+    body > h1 {
+        padding: 24px;
+    }
+
+    body > h1 {
+        font-size: 21px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <h1>Log in</h1>
     <form method="POST" action="/login">
         <input type="text" id="login" name="login" autofocus>
         <input type="text" id="pass" name="pass">
         <button type="submit">Log in</button>
     </form>
-</head>
-<body>
-    
 </body>
 </html>
